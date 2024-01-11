@@ -11,7 +11,7 @@
 # 벨트의 위치 및 cur가 변형됨. 순서가 보장되기 때문에, 링크드 리스트로 구현하자.
 # Dictionary 참조를 위해, belt의 리디렉션을 표기할 table 하나 필요.
 # Circular Linked List로 구현.
-DEBUG = False # Debug Mode
+DEBUG = True # Debug Mode
 from typing import List
 class Node:
     def __init__(self, iid, weight, prv = None,  nxt = None):
@@ -99,7 +99,7 @@ class Pipeline:
                 nxt_node.prv = prv_node
                 self.len-=1
                 if self.len:
-                    self.head_node = prv_node
+                    self.head_node = nxt_node
                 else:
                     self.head_node = None
                 return True
