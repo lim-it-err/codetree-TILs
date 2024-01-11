@@ -98,9 +98,7 @@ class Pipeline:
                 prv_node.nxt = nxt_node
                 nxt_node.prv = prv_node
                 self.len-=1
-                if self.len:
-                    self.head_node = nxt_node
-                else:
+                if not self.len:
                     self.head_node = None
                 return True
             cur = cur.nxt
