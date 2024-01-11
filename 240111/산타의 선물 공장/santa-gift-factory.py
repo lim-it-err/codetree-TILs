@@ -61,6 +61,8 @@ class Pipeline:
         nxt_node.prv = prv_node
         self.head_node = nxt_node
         self.len-=1
+        if not self.len:
+            self.head_node = None
 
     def lseek_by_value(self, iid):
         cur = self.head_node
@@ -73,6 +75,8 @@ class Pipeline:
         self.head_node = cur
 
     def peek(self):
+        if not self.head_node:
+            return -1, -1
         return self.head_node.iid, self.head_node.weight
 
     def peek_all(self):
@@ -94,6 +98,10 @@ class Pipeline:
                 prv_node.nxt = nxt_node
                 nxt_node.prv = prv_node
                 self.len-=1
+                if self.len:
+                    self.head_node = nxt_node
+                else:
+                    self.head_node = None
                 return True
             cur = cur.nxt
             if cur == self.head_node:
@@ -138,6 +146,8 @@ class Worker:
                 continue
 
             cur_iid, cur_weight =  self.pipelines[i].peek()
+            if cur_iid == -1:
+                continue
             if cur_weight <= w_max:
                 self.pipelines[i].pop()
                 del self.present_dict[cur_iid]
@@ -191,7 +201,6 @@ class Master:
         self.belt_num = belt_num
     def add(self, present):
         self.worker.allocate(present)
-
     def parse_command(self, command: List):
         typ, info = command[0], command[1:]
         if typ == 200:
@@ -206,6 +215,7 @@ class Master:
             for i in range(self.belt_num):
                 self.worker.pipelines[i].debug()
             print(f"{command} has been finished.[======")
+
 
 n = int(input())
 init_info = list(map(int, input().split()))
