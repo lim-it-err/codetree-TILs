@@ -31,19 +31,21 @@ class Pipeline:
         Do not need to be worried about Time Complexity. Will be called in 11 times.
         """
         if not self.head_node:
-            self.head_node = Node(presents_id[0], weights[0])
+            self.head_node = Node(presents_id[0], weights[0], None,None)
             presents_id, weights = presents_id[1:], weights[1:]
             self.len +=1
+            self.head_node.prv = self.head_node
+            self.head_node.nxt = self.head_node
 
-        cur_node = self.head_node
+        lst_node = self.head_node.prv
         for present_id, weight in zip(presents_id, weights):
-            new_node = Node(present_id, weight, cur_node, None)
-            cur_node.nxt = new_node
+            new_node = Node(present_id, weight, lst_node, None)
+            lst_node.nxt = new_node
 
-            cur_node = cur_node.nxt
+            lst_node = lst_node.nxt
             self.len+=1
-        cur_node.nxt = self.head_node
-        self.head_node.prv = cur_node
+        lst_node.nxt = self.head_node
+        self.head_node.prv = lst_node
 
     def lseek(self):
         self.head_node = self.head_node.nxt
