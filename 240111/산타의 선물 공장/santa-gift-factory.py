@@ -149,7 +149,7 @@ class Worker:
 
     def delete(self, iid):
         try:
-            pipeline_id = self.present_dict[iid]
+            pipeline_id = self.pipelines_status[self.present_dict[iid]]
             self.pipelines[pipeline_id].delete(iid)
             del self.present_dict[iid]
             return iid
@@ -160,7 +160,7 @@ class Worker:
 
     def lookup(self, iid):
         try:
-            pipeline_id = self.present_dict[iid]
+            pipeline_id = self.pipelines_status[self.present_dict[iid]]
             self.pipelines[pipeline_id].lseek_by_value(iid)
 
             return self.pipelines_status[pipeline_id] + 1
