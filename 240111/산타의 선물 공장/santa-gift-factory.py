@@ -99,7 +99,7 @@ class Pipeline:
                 nxt_node.prv = prv_node
                 self.len-=1
                 if self.len:
-                    self.head_node = nxt_node
+                    self.head_node = prv_node
                 else:
                     self.head_node = None
                 return True
@@ -203,6 +203,8 @@ class Master:
         self.worker.allocate(present)
     def parse_command(self, command: List):
         typ, info = command[0], command[1:]
+        if DEBUG:
+            print(f"***Processing {command}")
         if typ == 200:
             print(self.worker.seek(info[0]))
         elif typ == 300:
