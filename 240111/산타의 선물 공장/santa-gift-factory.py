@@ -11,7 +11,7 @@
 # 벨트의 위치 및 cur가 변형됨. 순서가 보장되기 때문에, 링크드 리스트로 구현하자.
 # Dictionary 참조를 위해, belt의 리디렉션을 표기할 table 하나 필요.
 # Circular Linked List로 구현.
-DEBUG = True # Debug Mode
+DEBUG = False # Debug Mode
 from typing import List
 class Node:
     def __init__(self, iid, weight, prv = None,  nxt = None):
