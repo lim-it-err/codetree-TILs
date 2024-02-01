@@ -21,9 +21,9 @@ while iterate_idx != B:
     try:
         T = iterate_idx - history[summation]
         iterate_idx = (B-iterate_idx)//T * T + iterate_idx
-        old_data = new_data[:]
+        old_data = new_data
     except KeyError:
         history[summation] = iterate_idx
-        old_data = new_data[:]
+        old_data = new_data
 for i in old_data:
     print(i)
