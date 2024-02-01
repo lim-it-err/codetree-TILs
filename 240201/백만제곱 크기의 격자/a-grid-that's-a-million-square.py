@@ -30,4 +30,4 @@ def four_with_no_area():
 # print(four_with_no_area() + three()+2*(MAX_x-MIN_x+1)+2*(MAX_y-MIN_y+1))
 # print(four_with_no_area())
 # print(three())
-print(2*(MAX_x-MIN_x+1)+2*(MAX_y-MIN_y+1))
+print(2*(MAX_x-MIN_x+1)+2*(MAX_y-MIN_y+1)+three())
