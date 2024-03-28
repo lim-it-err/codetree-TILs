@@ -22,8 +22,12 @@ class Fighter:
         if not self.fighter_lst[agent_id]:
             return
         stack = deque([agent_id])
+        ss= deque([])
         while stack:
-            cur_id = stack[-1]
+            # print(stack)
+            cur_id = stack.pop()
+            # print(cur_id)
+            ss.append(cur_id)
             flag = False
             dx, dy = dxs[direction], dys[direction]
 
@@ -33,9 +37,7 @@ class Fighter:
                     if self.is_valid(r+x+dx, c+y+dy):
                         if self.fighter_arr[r+x+dx][c+y+dy] not in [-3, cur_id]:
                             stack.append(self.fighter_arr[r+x+dx][c+y+dy])
-                            flag = True
-            if not flag:
-                break
+        stack = ss.copy()
         stack_cop = stack.copy()
         visited = {}
         while stack_cop:
@@ -50,6 +52,7 @@ class Fighter:
                     if not self.is_valid(r+x+dx, c+y+dy) or self.board[r+x+dx][c+y+dy]==2:
                         stack = deque([])
                         break
+        # print(stack)
         moved = stack.copy()
         visited = {}
         while stack:
@@ -99,7 +102,8 @@ class Fighter:
                     print(self.fighter_arr[i][j], end="\t")
             print()
 
-
+import sys
+# sys.stdin = open("inputs.txt", "r")
 L, N, Q = map(int, input().split())
 board = [0 for _ in range(L)]
 fighters = []
@@ -117,7 +121,7 @@ agent = Fighter(board, fighters)
 for i in range(Q):
     id,dir = map(int, input().split())
     # print("====")
-    # print(f"id: {id}, dir: {dir}")
+    # print(f"id: {id-1}, dir: {dir}")
     agent.move(id-1, dir)
     # agent.print()
     # print(agent.answer)
