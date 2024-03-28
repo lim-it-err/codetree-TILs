@@ -37,31 +37,39 @@ class Fighter:
             if not flag:
                 break
         stack_cop = stack.copy()
+        visited = {}
         while stack_cop:
             cur_id = stack_cop.pop()
+            if cur_id in visited:
+                continue
+            visited[cur_id] = True
             r, c, h, w, k = self.fighter_lst[cur_id]
             dx, dy = dxs[direction], dys[direction]
             for x in range(h):
                 for y in range(w):
                     if not self.is_valid(r+x+dx, c+y+dy) or self.board[r+x+dx][c+y+dy]==2:
-                        # print(cur_id, r+x+dx, c+y+dy)
-
                         stack = deque([])
                         break
-        stack = deque(set(list(stack)))
         moved = stack.copy()
+        visited = {}
         while stack:
             cur_id = stack.pop()
+            if cur_id in visited:
+                continue
+            visited[cur_id] = True
             dx, dy = dxs[direction], dys[direction]
             self._set_fighter(self.fighter_lst[cur_id], (0, 0), -3)
             self._set_fighter(self.fighter_lst[cur_id], (dx, dy), cur_id)
             r, c, h, w, k = self.fighter_lst[cur_id]
             self.fighter_lst[cur_id] = (r+dx, c+dy, h, w, k)
+        visited = {}
         while moved:
             fighter_idx = moved.pop()
+            if fighter_idx in visited:
+                continue
+            visited[fighter_idx]=True
             if fighter_idx == agent_id:
                 continue
-
             r, c, h, w, k = self.fighter_lst[fighter_idx]
             damage = 0
             for x in range(h):
@@ -79,17 +87,26 @@ class Fighter:
     def print(self):
         for i in range(len(self.fighter_lst)):
             print(self.fighter_lst[i])
+        print("====")
         for i in range(len(self.fighter_arr)):
-            print(self.fighter_arr[i])
+            for j in range(len(self.fighter_arr)):
+                if self.board[i][j] == 2:
+                    print("B", end="\t")
+                elif self.fighter_arr[i][j]==-3:
+                    print(" ", end="\t")
 
-# import sys
-# sys.stdin = open("inputs.txt", "r")
+                else:
+                    print(self.fighter_arr[i][j], end="\t")
+            print()
+
+
 L, N, Q = map(int, input().split())
 board = [0 for _ in range(L)]
 fighters = []
 def zero_based_int(data):
     return int(data)-1
 for i in range(L):
+
     board[i] = list(map(int, input().split()))
 
 for i in range(N):
@@ -99,7 +116,11 @@ for i in range(N):
 agent = Fighter(board, fighters)
 for i in range(Q):
     id,dir = map(int, input().split())
+    # print("====")
+    # print(f"id: {id}, dir: {dir}")
     agent.move(id-1, dir)
+    # agent.print()
+    # print(agent.answer)
 answer = 0
 for key in agent.answer:
     answer += agent.answer[key]
