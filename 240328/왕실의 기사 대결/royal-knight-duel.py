@@ -42,8 +42,11 @@ class Fighter:
         for x in range(h):
             for y in range(w):
                 if not self.is_valid(r+x+dx, c+y+dy) or self.board[r+x+dx][c+y+dy]==2:
+                    # print(cur_id, r+x+dx, c+y+dy)
+
                     stack = deque([])
                     break
+        stack = deque(set(list(stack)))
         moved = stack.copy()
         while stack:
             cur_id = stack.pop()
@@ -77,6 +80,7 @@ class Fighter:
         for i in range(len(self.fighter_arr)):
             print(self.fighter_arr[i])
 
+import sys
 L, N, Q = map(int, input().split())
 board = [0 for _ in range(L)]
 fighters = []
@@ -92,7 +96,9 @@ for i in range(N):
 agent = Fighter(board, fighters)
 for i in range(Q):
     id,dir = map(int, input().split())
+    # print(f"id: {id}, dir: {dir}")
     agent.move(id-1, dir)
+    # agent.print()
 answer = 0
 for key in agent.answer:
     answer += agent.answer[key]
