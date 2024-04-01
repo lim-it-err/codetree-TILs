@@ -169,6 +169,8 @@ while M:
                 santa_obj.faint[i] = 2
     santa_obj.decrease_faint()
     santa_obj.get_score()
+    if all(santa_obj.invalidated):
+        break
     if DEBUG:
         print_board_status(santa_obj, rodulph_obj)
 
