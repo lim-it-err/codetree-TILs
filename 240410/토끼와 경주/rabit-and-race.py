@@ -24,7 +24,7 @@ class RabbitManager:
         self.priorities =[rabbit.get_priority() for rabbit in self.lst]
         heapq.heapify(self.priorities)
         self.score = [0 for _ in range(len(self.lst))]
-        self.priorities2 =[ (-sum(rabbit.pos), -rabbit.pos[1], -rabbit.pos[0],-rabbit.pid ) for rabbit in self.lst]
+        self.priorities2 =[ (-sum(rabbit.pos), -rabbit.pos[0], -rabbit.pos[1],-rabbit.pid ) for rabbit in self.lst]
         heapq.heapify(self.priorities2)
     def get_idx(self, pid):
         return self.map_pid_to_lst[pid]
@@ -67,31 +67,109 @@ class RabbitManager:
         return agent.pos
 
     def algorithm(self, x, y, dx, dy, power, N, M):
-        x-=1
-        y-=1
-        if dx:
-            T = 2 * N - 2
-            power %= T
+        # 토끼를 위로 이동시킵니다.
+        n, m = N, M
 
-            B = N
-        else:
-            T = 2 * M - 2
-            power %= T
-            B = M
-        if dx:
-            nx = x + dx * power
-            if nx < 0:
-                nx = -nx
-            if nx >= B:
-                nx = -nx % T
-            return nx+1, y+1
-        else:
-            ny = y + dy * power
-            if ny < 0:
-                ny = -ny
-            if ny >= B:
-                ny = -ny % T
-            return x+1, ny+1
+        def get_up_rabbit(cur_rabbit, dis):
+            up_rabbit = cur_rabbit
+            dis %= 2 * (n - 1)
+
+            if dis >= up_rabbit[0] - 1:
+                dis -= (up_rabbit[0] - 1)
+                up_rabbit[0] = 1
+            else:
+                up_rabbit[0] -= dis
+                dis = 0
+
+            if dis >= n - up_rabbit[0]:
+                dis -= (n - up_rabbit[0])
+                up_rabbit[0] = n
+            else:
+                up_rabbit[0] += dis
+                dis = 0
+
+            up_rabbit[0] -= dis
+
+            return up_rabbit
+
+        # 토끼를 아래로 이동시킵니다.
+        def get_down_rabbit(cur_rabbit, dis):
+            down_rabbit = cur_rabbit
+            dis %= 2 * (n - 1)
+
+            if dis >= n - down_rabbit[0]:
+                dis -= (n - down_rabbit[0])
+                down_rabbit[0] = n
+            else:
+                down_rabbit[0] += dis
+                dis = 0
+
+            if dis >= down_rabbit[0] - 1:
+                dis -= (down_rabbit[0] - 1)
+                down_rabbit[0] = 1
+            else:
+                down_rabbit[0] -= dis
+                dis = 0
+
+            down_rabbit[0] += dis
+
+            return down_rabbit
+
+        # 토끼를 왼쪽으로 이동시킵니다.
+        def get_left_rabbit(cur_rabbit, dis):
+            left_rabbit = cur_rabbit
+            dis %= 2 * (m - 1)
+
+            if dis >= left_rabbit[1] - 1:
+                dis -= (left_rabbit[1] - 1)
+                left_rabbit[1] = 1
+            else:
+                left_rabbit[1] -= dis
+                dis = 0
+
+            if dis >= m - left_rabbit[1]:
+                dis -= (m - left_rabbit[1])
+                left_rabbit[1] = m
+            else:
+                left_rabbit[1] += dis
+                dis = 0
+
+            left_rabbit[1] -= dis
+
+            return left_rabbit
+
+        # 토끼를 오른쪽으로 이동시킵니다.
+        def get_right_rabbit(cur_rabbit, dis):
+            right_rabbit = cur_rabbit
+            dis %= 2 * (m - 1)
+
+            if dis >= m - right_rabbit[1]:
+                dis -= (m - right_rabbit[1])
+                right_rabbit[1] = m
+            else:
+                right_rabbit[1] += dis
+                dis = 0
+
+            if dis >= right_rabbit[1] - 1:
+                dis -= (right_rabbit[1] - 1)
+                right_rabbit[1] = 1
+            else:
+                right_rabbit[1] -= dis
+                dis = 0
+
+            right_rabbit[1] += dis
+
+            return right_rabbit
+
+        if dx > 0:
+            ret = get_up_rabbit([x, y], power)
+        elif dx < 0:
+            ret = get_down_rabbit([x, y], power)
+        elif dy > 0:
+            ret = get_right_rabbit([x, y], power)
+        elif dy < 0:
+            ret = get_left_rabbit([x, y], power)
+        return (ret[0], ret[1])
 
     def change_power(self, pid, L):
         self.lst[self.get_idx(pid)].change_power(L)
@@ -110,3 +188,4 @@ for i in range(Q):
         rm.change_power(cmd[1], cmd[2])
     if cmd[0] == 400:
         print(max(rm.score))
+# print(rm.score)
