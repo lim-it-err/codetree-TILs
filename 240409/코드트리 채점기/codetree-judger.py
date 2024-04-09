@@ -14,19 +14,17 @@ class Domain:
             return 0
         self.domain_id[uid] = t
         heapq.heappush(self.heap, (p, t, uid, self.name))
-        if DEBUG:
-            print("After Insertion", self.heap, self.domain_id)
+        # if DEBUG:
+        #     print("After Insertion", self.heap, self.domain_id)
         return 1
     def delete(self, uid):
         _, _, _uid, _ = heapq.heappop(self.heap)
         # print(uid, "deleted", self.name)
-        assert _uid == uid, "Logic Wrong."
         del self.domain_id[uid]
         # print(self.domain_id)
     def peek(self):
         if self.heap:
             return self.heap[0]
-        print("WARNING: Domain is Empty!")
         return False
 class WaitingQueue:
     def __init__(self):
@@ -83,6 +81,8 @@ class Judger():
         return True
 
     def start(self, t):
+        import time
+        s= time.perf_counter()
         candidates = wq.get_candidate()
         while candidates:
             candidate = heapq.heappop(candidates)
@@ -92,17 +92,17 @@ class Judger():
             if domain_name in self.coldtime and t < self.coldtime[domain_name]:
                 continue  # in coldtime
             if not self.allocate_available(t, candidate):
-                if DEBUG:
-                    print("300:No worker left")
+                # if DEBUG:
+                #     print("300:No worker left")
                 return False
-            if DEBUG:
-                print(f"300:{candidate} started working")
+            # if DEBUG:
+            #     print(f"300:{candidate} started working")
             return True
 
     def end(self, end_t, worker_id):
         if self.lst[worker_id] == ():
-            if DEBUG:
-                print(f"400: {worker_id} was not in work. ignoring")
+            # if DEBUG:
+            #     print(f"400: {worker_id} was not in work. ignoring")
             return
         task = self.lst[worker_id]
         p, t, uid, domain_name = task
@@ -110,31 +110,25 @@ class Judger():
         del self.working_domain[domain_name]
         heapq.heappush(self.available, worker_id)
         self.lst[worker_id] = ()
-        if DEBUG:
-            print(f"400: {task} are deleted, coldtime:{self.coldtime}")
+        # if DEBUG:
+        #     print(f"400: {task} are deleted, coldtime:{self.coldtime}")
         return
-
 
 wq = WaitingQueue()
 N = int(input())
 jd = Judger(N, wq)
+answer = []
 for i in range(N):
     cmd = input().split()
     if cmd[0] == "100":
         wq.add(0, 1, cmd[2])
-        if DEBUG:
-            print(cmd, wq.get_waiting_N())
     if cmd[0] == "200":
         wq.add(int(cmd[1]), int(cmd[2]), cmd[3])
-        if DEBUG:
-            print(cmd, wq.get_waiting_N())
     if cmd[0] == "300":
         jd.start(int(cmd[1]))
-        if DEBUG:
-            print(cmd, wq.get_waiting_N())
     if cmd[0] == "400":
         jd.end(int(cmd[1]), int(cmd[2]) - 1)
-        if DEBUG:
-            print(cmd, wq.get_waiting_N())
     if cmd[0] == "500":
-        print(wq.get_waiting_N())
+        answer.append(wq.get_waiting_N())
+for i in answer:
+    print(i)
