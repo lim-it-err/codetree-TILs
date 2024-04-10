@@ -1,6 +1,6 @@
 # 7:20
 # import sys
-# sys.stdin = open("input.txt")
+# sys.stdin = open("input2.txt")
 DEBUG = False
 class Box:
     def __init__(self, _id, _w):
@@ -65,7 +65,6 @@ class CircularLinkedList():
         self.available = False
 
     def get_element(self, other_linkedlist):
-        assert not other_linkedlist.available, f"Other linkedlist {other_linkedlist.id} is not available"
         last_head = self.head.prv
         other_head = other_linkedlist.head
         other_last_head = other_linkedlist.head.prv
@@ -87,7 +86,6 @@ class CircularLinkedList():
             self._check_deletion()
             while self.head.id != f_id:
                 self.head = self.head.nxt
-                self._check_deletion()
             return True
         return False
 
@@ -96,13 +94,11 @@ class CircularLinkedList():
             if self.N <= 0:
                 return False  # No element Left
             if self.valid[self.head.id] == False:
-                del self.valid[self.head.id]
                 prv_node = self.head.prv
                 nxt_node = self.head.nxt
                 prv_node.link_nxt(nxt_node)
                 nxt_node.link_prv(prv_node)
                 head = self.head.nxt
-                del self.head
                 self.head = head
                 continue
             return False
@@ -119,6 +115,7 @@ class CircularLinkedList():
 
 Q = int(input())
 line = []
+import time
 for _ in range(Q):
     cmd = list(map(int, input().split()))
     if cmd[0] == 100:
@@ -127,7 +124,7 @@ for _ in range(Q):
         cmd_n, cmd_m = cmd_n[:len(cmd_n)//2], cmd_n[len(cmd_n)//2:]
         for j in range(0, N, N//M):
             line.append(CircularLinkedList(j//(N//M), N, cmd_n[j:j+N//M], cmd_m[j:j+N//M]))
-
+        s = time.perf_counter()
     elif cmd[0] == 200:
         summation = 0
         for l in line:
@@ -152,6 +149,7 @@ for _ in range(Q):
             if l.is_element(cmd[1]):
                 summation = i+1
         print(summation)
+        # s=time.perf_counter()
     elif cmd[0] == 500:
         if line[cmd[1]-1].available == False:
             print(-1)
@@ -165,9 +163,11 @@ for _ in range(Q):
                     break
                 i = (i+1)%len(line)
             print(cmd[1])
-    if DEBUG:
-        for i in line:
-            print(f"{i.id}-, activated:{i.available}-, cmd:{cmd}")
-            i.debug()
-            print(i.valid, i.N)
-        print("================")
+        # print(time.perf_counter()-s)
+        # s = time.perf_counter()
+    # if DEBUG:
+    #     for i in line:
+    #         print(f"{i.id}-, activated:{i.available}-, cmd:{cmd}")
+    #         i.debug()
+    #         print(i.valid, i.N)
+    #     print("================")
