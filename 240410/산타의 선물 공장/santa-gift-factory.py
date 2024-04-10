@@ -48,7 +48,7 @@ class CircularLinkedList():
 
     def remove(self, r_id):
         self.N -= 1
-        if not r_id in self.valid:
+        if not r_id in self.valid or self.valid[r_id] == False:
             return -1
         self.valid[r_id] = False
         self._check_deletion()
