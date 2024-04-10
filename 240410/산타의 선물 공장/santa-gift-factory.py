@@ -1,4 +1,6 @@
 # 7:20
+# import sys
+# sys.stdin = open("input.txt")
 DEBUG = False
 class Box:
     def __init__(self, _id, _w):
@@ -20,7 +22,7 @@ class CircularLinkedList():
         self.available = True
         self.head = None
         self.make_linked_list(ids, weights)
-        self.N = N
+        self.N = len(ids)
         self.valid = {_id: True for _id in ids}  # ID, True, if needs deletion-> False
     def make_linked_list(self, ids, weights):
         prev_box = None
@@ -39,17 +41,21 @@ class CircularLinkedList():
         if self.N < 0:
             if DEBUG:
                 print("LinkedList Empty")
+            return 0
         self._check_deletion()
         if self.head.w <= criteria:
             self.valid[self.head.id] = False
-            return self.head.w
+            ret = self.head.w
+            self.head = self.head.nxt
+            self.N-=1
+            return ret
         self.head = self.head.nxt
         return 0 # Nothing to pop
 
     def remove(self, r_id):
-        self.N -= 1
         if not r_id in self.valid or self.valid[r_id] == False:
             return -1
+        self.N -=1
         self.valid[r_id] = False
         self._check_deletion()
 
@@ -71,31 +77,17 @@ class CircularLinkedList():
         other_last_head.link_nxt(self.head)
         for key in other_linkedlist.valid:
             self.valid[key] = other_linkedlist.valid[key]
-        if DEBUG:
-            # head = self.head
-            head = self.head
-            print(head.id, end="->")
-            cur = head.nxt
-            while cur != head:
-                print(cur.id, end="->")
-                cur= cur.nxt
-            print("E")
+        self.N += other_linkedlist.N
 
-            # head = self.head
-            head = other_linkedlist.head
-            print(head.w, end="->")
-            cur = head.nxt
-            while cur != head:
-                print(cur.w, end="->")
-                cur= cur.nxt
-            print("E")
 
 
 
     def is_element(self, f_id):
         if f_id in self.valid and self.valid[f_id] == True:
+            self._check_deletion()
             while self.head.id != f_id:
                 self.head = self.head.nxt
+                self._check_deletion()
             return True
         return False
 
@@ -103,7 +95,6 @@ class CircularLinkedList():
         while True:
             if self.N <= 0:
                 return False  # No element Left
-            assert self.head.id in self.valid, "valid dictionary are not synchronized"
             if self.valid[self.head.id] == False:
                 del self.valid[self.head.id]
                 prv_node = self.head.prv
@@ -115,6 +106,15 @@ class CircularLinkedList():
                 self.head = head
                 continue
             return False
+    def debug(self):
+        if DEBUG:
+            head = self.head
+            print(head.id, end="->")
+            cur = head.nxt
+            while cur != head:
+                print(cur.id, end="->")
+                cur= cur.nxt
+            print("E")
 
 
 Q = int(input())
@@ -164,5 +164,10 @@ for _ in range(Q):
                     l.get_element(line[cmd[1]-1])
                     break
                 i = (i+1)%len(line)
-
             print(cmd[1])
+    if DEBUG:
+        for i in line:
+            print(f"{i.id}-, activated:{i.available}-, cmd:{cmd}")
+            i.debug()
+            print(i.valid, i.N)
+        print("================")
