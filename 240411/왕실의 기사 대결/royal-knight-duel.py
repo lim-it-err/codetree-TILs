@@ -5,6 +5,9 @@ agent = []
 for i in range(L):
     board.append(list(map(int, input().split())))
 
+
+
+
 class Agent:
     def __init__(self, init_data, _id, N):
         r, c, h, w, k = init_data
@@ -83,9 +86,13 @@ for i in range(N):
     agent.append(Agent((r, c, h, w, k), i+1, L))
 
 from collections import deque
+
+
 for i in range(Q):
     flag = True
     x, y = map(int, input().split())
+    if not agent[x-1].activate:
+        continue
     dxs, dys = [-1, 0, 1, 0], [0, 1, 0, -1]
     s = deque([x])
     _s = deque([x])
