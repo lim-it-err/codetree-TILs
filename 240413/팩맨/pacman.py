@@ -6,6 +6,7 @@ board = [[{} for _ in range(4)] for _ in range(4)]
 new_id = 0
 is_valid = lambda x, y : 0<=x<4 and 0<=y<4
 board_corpse = [[{} for _ in range(4)] for _ in range(4)]
+board_corpse_prev = [[{} for _ in range(4)] for _ in range(4)]
 
 
 class Monster:
@@ -23,7 +24,7 @@ class Monster:
     def validate(self):
         board[self.pos[0]][self.pos[1]][self.id] = True
         self.power=0
-    def move(self, pacman_pos, board_corpse):
+    def move(self, pacman_pos, board_corpse, board_corpse_prev):
         if self.power <0:
             return False
         x, y = self.pos
@@ -36,10 +37,12 @@ class Monster:
                 continue
             if board_corpse[nx][ny] != {}:
                 continue
+            if board_corpse_prev[nx][ny]!={}:
+                continue
             self.pos = (nx, ny)
             del board[x][y][self.id]
             board[nx][ny][self.id] = True
-            self.heading = _dir
+            self.heading = (_dir+i)%8
             return True
         return False
 
@@ -94,7 +97,7 @@ class Pacman:
             if eat>max_eat:
                 max_eat = eat
                 max_idx = i
-        assert max_idx >=0, "pacman move is invalid"
+
         directions = self.move_candidate[max_idx]
         x, y = self.pos
         for d in directions:
@@ -122,11 +125,14 @@ for i in range(T):
         if monster.status>0:
             new_id +=1
             monster_candidate.append(monster.copy(new_id)) # 1단계
+
+
     monsters.extend(monster_candidate)
     for i, monster in enumerate(monsters):
         if monster.status>0:
-            ret = monster.move(pacman.pos, board_corpse) # 2단계, ret: monster moved
-    del board_corpse # TODO
+            ret = monster.move(pacman.pos, board_corpse, board_corpse_prev) # 2단계, ret: monster moved
+
+    board_corpse_prev = board_corpse # TODO
     board_corpse = pacman.move() # 3,4단계
 
 sum = 0
