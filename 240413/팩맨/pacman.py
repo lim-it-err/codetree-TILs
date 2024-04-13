@@ -119,6 +119,8 @@ for i in range(M):
 for i in range(T):
     monster_candidate = []
     for monster in monsters:
+        if monster is None:
+            continue
         if monster.power == -1:
             monster.validate()
 
@@ -129,10 +131,17 @@ for i in range(T):
 
     monsters.extend(monster_candidate)
     for i, monster in enumerate(monsters):
+        if monster is None:
+            continue
         if monster.status>0:
             ret = monster.move(pacman.pos, board_corpse, board_corpse_prev) # 2단계, ret: monster moved
 
     board_corpse_prev = board_corpse # TODO
+    for i in range(4):
+        for j in range(4):
+            keys = board_corpse_prev[i][j].keys()
+            for key in keys:
+                monsters[key] = None
     board_corpse = pacman.move() # 3,4단계
 
 sum = 0
