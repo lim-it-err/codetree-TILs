@@ -1,7 +1,7 @@
 dxs, dys = [-1, -1, 0, 1, 1, 1, 0, -1], [0,-1, -1, -1, 0, 1, 1, 1]
 M, T = map(int, input().split())
 r, c = map(int, input().split())
-monsters = []
+monsters = {}
 board = [[{} for _ in range(4)] for _ in range(4)]
 new_id = 0
 is_valid = lambda x, y : 0<=x<4 and 0<=y<4
@@ -114,25 +114,22 @@ pacman = Pacman((r - 1, c - 1))
 
 for i in range(M):
     r, c, d = map(int, input().split())
-    monsters.append(Monster((r - 1, c - 1), d - 1, i))
+    monsters[i] = Monster((r - 1, c - 1), d - 1, i)
     new_id = i
 for i in range(T):
-    monster_candidate = []
-    for monster in monsters:
-        if monster is None:
-            continue
+    keys = list(monsters.keys())
+    for idx in keys:
+        monster = monsters[idx]
         if monster.power == -1:
             monster.validate()
 
         if monster.status>0:
             new_id +=1
-            monster_candidate.append(monster.copy(new_id)) # 1단계
+            monsters[new_id] = monster.copy(new_id) # 1단계
 
 
-    monsters.extend(monster_candidate)
-    for i, monster in enumerate(monsters):
-        if monster is None:
-            continue
+    for idx in monsters.keys():
+        monster = monsters[idx]
         if monster.status>0:
             ret = monster.move(pacman.pos, board_corpse, board_corpse_prev) # 2단계, ret: monster moved
 
@@ -141,7 +138,7 @@ for i in range(T):
         for j in range(4):
             keys = board_corpse_prev[i][j].keys()
             for key in keys:
-                monsters[key] = None
+                del monsters[key]
     board_corpse = pacman.move() # 3,4단계
 
 sum = 0
